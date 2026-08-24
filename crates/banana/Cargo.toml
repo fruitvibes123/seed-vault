@@ -1,0 +1,17 @@
+[package]
+name = "banana"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+description = "Framework-agnostic HTTP byte-range parser + mtime-keyed BLAKE3 ETag cache for streaming-file servers."
+keywords = ["http", "range", "etag", "blake3", "streaming"]
+categories = ["web-programming", "filesystem"]
+readme = "README.md"
+
+[dependencies]
+blake3 = "1"
+tokio = { version = "1", features = ["fs", "io-util", "sync"] }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["fs", "io-util", "sync", "macros", "rt", "rt-multi-thread", "time"] }
+tempfile = "3"

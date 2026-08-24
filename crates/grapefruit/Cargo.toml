@@ -1,0 +1,13 @@
+[package]
+name = "grapefruit"
+version = "0.1.0"
+edition = "2024"
+description = "Argon2id password hashing/verification with injectable cost params (empty-stored-hash fail-closed)"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# argon2 `zeroize`: wipes the password-derived initial hash + intermediate block
+# buffers (NOT the large memory matrix — see lib.rs "Memory hygiene"). `zeroize` is
+# already in the recipes shipped allowlist; default-features=false adds no derive.
+argon2 = { version = "0.5", features = ["zeroize"] }
+rand = "0.8"

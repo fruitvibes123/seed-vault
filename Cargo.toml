@@ -1,0 +1,21 @@
+[workspace]
+members = [
+    "crates/coconut",
+    "crates/lychee",
+    "crates/grapefruit",
+    "crates/pomegranate",
+    "crates/mangosteen",
+    "crates/durian",
+    "crates/pomelo",
+    "crates/fig",
+    "crates/banana",
+    "crates/grape",
+    "crates/dragonfruit",
+]
+# dragonfruit-{nostd,noalloc}-gate each have their OWN [workspace] (trimmed
+# default-features=false dalek/sha2 = the firmware config) so they're excluded here:
+# nostd-gate runs the trimmed verify KAT on the host; noalloc-gate is a no-allocator
+# staticlib link for thumbv8m that fails on alloc-creep. Both gated via
+# `--manifest-path` in the verification suite.
+exclude = ["crates/dragonfruit-nostd-gate", "crates/dragonfruit-noalloc-gate"]
+resolver = "2"

@@ -1,0 +1,28 @@
+# dragonfruit-nostd-gate — a STANDING gate that the TRIMMED (firmware) dragonfruit
+# config verifies correctly. The problem it closes: dev-dep + main-
+# workspace feature unification re-enables `fast`+`std` on the shared ed25519-dalek
+# for every `cargo test -p dragonfruit` / deploy build, so those tests exercise the
+# RE-UNIFIED config, NOT the `default-features=false` config the RP2350 firmware
+# actually links. The thumbv8m build is compile-only. So nothing RAN the trimmed
+# verify path until this crate.
+#
+# SEPARATE workspace (own [workspace], NOT a root member) so the main workspace's
+# grape/recipes dalek features don't unify into it: here dragonfruit resolves with
+# its own default-features=false deps = the firmware's trimmed set, and the golden
+# KAT runs on the host; the verification suite runs it via --manifest-path.
+[workspace]
+
+[package]
+name = "dragonfruit-nostd-gate"
+version = "0.0.0"
+edition = "2021"
+license = "GPL-2.0-only"
+publish = false
+
+[dependencies]
+# dragonfruit's default features are verify-only (no `sign`); its deps are already
+# default-features=false. No dalek/sha2 here → no feature re-unification.
+dragonfruit = { path = "../dragonfruit" }
+
+[dev-dependencies]
+hex = "0.4"

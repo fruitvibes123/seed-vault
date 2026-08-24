@@ -1,0 +1,9 @@
+[package]
+name = "mangosteen"
+version = "0.1.0"
+edition = "2024"
+description = "session-bound CSRF tokens — BLAKE3 keyed mint + constant-time verify, domain-separated key derivation"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+blake3 = "1"

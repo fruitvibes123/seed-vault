@@ -1,0 +1,12 @@
+[package]
+name = "pomegranate"
+version = "0.1.0"
+edition = "2024"
+description = "generic per-key attempt budget — storage trait, burn semantics, framework-free"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+async-trait = "0.1"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt"] }

@@ -1,0 +1,9 @@
+[package]
+name = "durian"
+version = "0.1.0"
+edition = "2024"
+description = "bounded in-RAM sliding-window failure store + exponential soft-lock backoff (LRU-capped against attacker-supplied keys)"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+lru = "0.12"

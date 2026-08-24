@@ -1,0 +1,34 @@
+[package]
+name = "fig"
+version = "0.1.0"
+edition = "2024"
+description = "JSON error contract for Rust JSON APIs — {error,status} body with Rocket + Axum response adapters behind feature flags."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Fruchti/recipes"
+keywords = ["api", "json", "error", "rocket", "axum"]
+categories = ["web-programming", "api-bindings"]
+readme = "README.md"
+
+[features]
+default = ["rocket"]
+rocket = ["dep:rocket"]
+axum = ["dep:axum"]
+
+[dependencies]
+# Rocket adapter (feature = "rocket", default). The Responder builds the JSON
+# body via serde_json::to_vec directly and sets Content-Type via a raw header,
+# so the production surface needs no rocket "json" feature — that stays a
+# dev-dependency for the catcher integration tests.
+rocket = { version = "0.5.1", optional = true }
+# Axum adapter (feature = "axum"). Only IntoResponse + the http/body core is
+# used, so axum's default features are off.
+axum = { version = "0.8", default-features = false, optional = true }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1"
+
+[dev-dependencies]
+rocket = { version = "0.5.1", features = ["json"] }
+# The axum-adapter tests read the response body (async) and assert exact bytes.
+http-body-util = "0.1"
+tokio = { version = "1", features = ["macros", "rt"] }

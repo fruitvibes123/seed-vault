@@ -1,0 +1,38 @@
+[package]
+name = "pomelo"
+version = "0.1.0"
+edition = "2024"
+description = "Compile-time IDOR-safe resource loading — a generic Scoped<T> guard with Rocket + Axum adapters behind feature flags."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Fruchti/recipes"
+keywords = ["guard", "idor", "scope", "rocket", "axum"]
+categories = ["web-programming", "authentication"]
+readme = "README.md"
+
+[features]
+default = ["rocket"]
+rocket = ["dep:rocket"]
+axum = ["dep:axum", "dep:tracing"]
+
+[dependencies]
+# Framework-agnostic core: the Resource trait + PathParamKind (always built).
+async-trait = "0.1"
+sqlx = { version = "0.8", features = ["sqlite-unbundled", "runtime-tokio", "macros"] }
+# Rocket adapter (feature = "rocket", default) — the Scoped<T> request guard.
+# `json` is preserved from the pre-split dep set (behavior unchanged).
+rocket = { version = "0.5.1", features = ["json"], optional = true }
+# Axum adapter (feature = "axum") — the Scoped<T> FromRequestParts extractor.
+# Default features are kept so `axum::extract::RawPathParams` is available; the
+# guard also logs its DB-error path via `tracing` (matching the rocket guard's
+# `rocket::error!`).
+axum = { version = "0.8", optional = true }
+tracing = { version = "0.1", optional = true }
+
+[dev-dependencies]
+# pomelo's tests depend on no consumer type crate; the integration
+# test uses a synthetic `TestScope`
+# newtype defined inline so the crate stays portable for a future
+# Level-2 extraction.
+tokio = { version = "1", features = ["macros", "rt"] }
+# The axum-adapter unit tests drive routers via tower's `oneshot`.
+tower = { version = "0.5", features = ["util"] }

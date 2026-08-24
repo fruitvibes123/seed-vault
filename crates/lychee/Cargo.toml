@@ -1,0 +1,11 @@
+[package]
+name = "lychee"
+version = "0.1.0"
+edition = "2024"
+description = "URL-safe random token mint + deterministic BLAKE3 storage hash (+ domain-separated keyed variant)"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+blake3 = "1"
+base64 = "0.22"
+rand = "0.8"

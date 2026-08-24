@@ -1,0 +1,38 @@
+# dragonfruit-noalloc-gate — a STANDING gate that dragonfruit's firmware verify path
+# stays ALLOC-FREE, not merely no_std. The hole
+# it closes: the verification suite's thumbv8m step is a `cargo build -p dragonfruit` LIBRARY
+# (rlib) build, and an rlib links clean even if a dependency pulls in `alloc` (no
+# allocator is needed until a FINAL artifact). The host dragonfruit-nostd-gate runs on
+# x86_64 where the std allocator is always present. So neither existing gate can fire on
+# alloc-creep — a dep bump dragging `alloc` into the trimmed verify graph would ship
+# "green" and only surface at the firmware link (a heap forced into a 520 KB-SRAM signer
+# = fragmentation + OOM-panic = a bricked signer + a larger TCB).
+#
+# This crate is a STATICLIB (a final artifact) with NO `#[global_allocator]`: it links
+# ONLY if nothing reachable from `verify_bundle` uses `alloc` (else the linker errors
+# "no global memory allocator found but one is required"). The verification suite builds it for
+# `thumbv8m.main-none-eabihf`, so alloc-creep fails the gate instead of shipping.
+#
+# SEPARATE workspace (own [workspace], NOT a root member) so the main workspace's
+# grape/recipes dalek features don't unify in — dragonfruit resolves here with its own
+# default-features=false deps = the firmware's trimmed set (same isolation trick as
+# dragonfruit-nostd-gate).
+[workspace]
+
+[package]
+name = "dragonfruit-noalloc-gate"
+version = "0.0.0"
+edition = "2021"
+license = "GPL-2.0-only"
+publish = false
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+# dragonfruit default features = verify-only (no `sign`); its deps are already
+# default-features=false. No dalek/sha2 declared here → no feature re-unification.
+dragonfruit = { path = "../dragonfruit" }
+
+[profile.release]
+panic = "abort"
