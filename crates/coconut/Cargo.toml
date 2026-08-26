@@ -1,9 +1,16 @@
 [package]
-name = "coconut"
+name = "coconut-fs"
 version = "0.1.0"
 edition = "2024"
 description = "born-at-mode private file/dir creation + fd-verified mode re-assertion (O_NOFOLLOW + fchmod)"
 license = "MIT OR Apache-2.0"
+repository = "https://github.com/fruitvibes123/seed-vault"
+readme = "README.md"
+keywords = ["secrets", "toctou", "permissions", "fchmod", "nofollow"]
+categories = ["filesystem", "os::unix-apis"]
+
+[lib]
+name = "coconut"
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"

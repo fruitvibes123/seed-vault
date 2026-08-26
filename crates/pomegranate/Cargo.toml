@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2024"
 description = "generic per-key attempt budget — storage trait, burn semantics, framework-free"
 license = "MIT OR Apache-2.0"
+repository = "https://github.com/fruitvibes123/seed-vault"
+readme = "README.md"
+keywords = ["brute-force", "attempt", "budget", "lockout", "authentication"]
+categories = ["authentication", "web-programming"]
 
 [dependencies]
 async-trait = "0.1"

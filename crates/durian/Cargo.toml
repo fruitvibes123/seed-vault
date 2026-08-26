@@ -1,9 +1,16 @@
 [package]
-name = "durian"
+name = "durian-throttle"
 version = "0.1.0"
 edition = "2024"
 description = "bounded in-RAM sliding-window failure store + exponential soft-lock backoff (LRU-capped against attacker-supplied keys)"
 license = "MIT OR Apache-2.0"
+repository = "https://github.com/fruitvibes123/seed-vault"
+readme = "README.md"
+keywords = ["throttle", "backoff", "brute-force", "login", "rate-limiting"]
+categories = ["authentication", "web-programming"]
+
+[lib]
+name = "durian"
 
 [dependencies]
 lru = "0.12"

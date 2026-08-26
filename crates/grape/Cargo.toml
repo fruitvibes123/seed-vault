@@ -1,9 +1,16 @@
 [package]
-name = "grape"
+name = "grape-hostkey"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "Deterministic, operator-owned derivation of the rescue dropbear ed25519 host key (HKDF-SHA256 + ed25519). Pure-Rust, no FFI."
+repository = "https://github.com/fruitvibes123/seed-vault"
+readme = "README.md"
+keywords = ["ssh", "host-key", "ed25519", "hkdf", "deterministic"]
+categories = ["cryptography"]
+
+[lib]
+name = "grape"
 
 [dependencies]
 hkdf = "0.12"

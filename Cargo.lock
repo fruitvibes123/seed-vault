@@ -327,7 +327,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "coconut"
+name = "coconut-fs"
 version = "0.1.0"
 dependencies = [
  "libc",
@@ -543,7 +543,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "durian"
+name = "durian-throttle"
 version = "0.1.0"
 dependencies = [
  "lru",
@@ -858,7 +858,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
 
 [[package]]
-name = "grape"
+name = "grape-hostkey"
 version = "0.1.0"
 dependencies = [
  "ed25519-dalek",
