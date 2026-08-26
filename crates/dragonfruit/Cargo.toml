@@ -3,6 +3,10 @@ name = "dragonfruit"
 version = "0.4.0"
 edition = "2021"
 license = "GPL-2.0-only"
+repository = "https://github.com/fruitvibes123/seed-vault"
+readme = "README.md"
+keywords = ["ed25519", "signing", "delegation", "no-std", "anti-rollback"]
+categories = ["cryptography", "no-std", "embedded"]
 description = "Operator-sovereign artifact-signing verify/sign core + canonical fixed-width statement format (ed25519 two-role cascade, Spec 1A). Pure-Rust, no FFI; verify-only by default, software signing behind `sign`."
 
 # `no_std`-clean so the RP2350 firmware reuses the EXACT verify+statement core.

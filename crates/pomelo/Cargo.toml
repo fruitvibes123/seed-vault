@@ -1,13 +1,16 @@
 [package]
-name = "pomelo"
+name = "pomelo-guard"
 version = "0.1.0"
 edition = "2024"
 description = "Compile-time IDOR-safe resource loading — a generic Scoped<T> guard with Rocket + Axum adapters behind feature flags."
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/Fruchti/recipes"
+repository = "https://github.com/fruitvibes123/seed-vault"
 keywords = ["guard", "idor", "scope", "rocket", "axum"]
 categories = ["web-programming", "authentication"]
 readme = "README.md"
+
+[lib]
+name = "pomelo"
 
 [features]
 default = ["rocket"]

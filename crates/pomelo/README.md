@@ -1,6 +1,9 @@
 # pomelo
 
-Compile-time IDOR-safe resource loading for Rocket routes.
+Compile-time IDOR-safe resource loading, with Rocket and Axum adapters behind
+feature flags. Published on crates.io as `pomelo-guard` (the bare name was
+taken); the library target stays `pomelo`, so code writes `use pomelo::…`
+regardless.
 
 ## What it does
 
@@ -114,4 +117,7 @@ MIT OR Apache-2.0 (your choice). Workspace-shared license files at the repo root
 
 ## Status
 
-Workspace sibling crate of the recipes project. Designed for extraction to its own repo when needed; the move is mechanical.
+Extracted from a production web application (the reference tenant of the
+fruit-basket appliance OS), where every scope-owned route loads through
+`Scoped<T>`. The storage layer is currently welded to sqlx/SQLite
+(`load_scoped` takes a `SqlitePool`); decoupling the pool type is planned.
