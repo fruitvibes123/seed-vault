@@ -4,12 +4,11 @@ Deterministic, operator-owned derivation of an SSH ed25519 host key.
 Published on crates.io as `grape-hostkey` (the bare name was taken); the
 library target stays `grape`.
 
-The problem it solves: a recovery environment needs an SSH host key, but a key
-generated on the machine is a key the operator cannot verify on first contact
-(TOFU). grape derives the host key deterministically from operator-owned
-inputs instead, so the operator can precompute the exact host key offline,
-pin it in `known_hosts`, and connect to a recovery shell with no
-trust-on-first-use step.
+A recovery environment needs an SSH host key, and a key generated on the
+machine is one the operator cannot verify on first contact (TOFU). grape
+derives the host key deterministically from operator-owned inputs instead, so
+the operator can precompute the exact host key offline, pin it in
+`known_hosts`, and connect to a recovery shell with no trust-on-first-use step.
 
 Two stages, both pure and deterministic:
 

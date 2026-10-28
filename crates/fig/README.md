@@ -1,8 +1,8 @@
 # fig
 
-JSON error contract for Rocket JSON APIs. Provides an `ApiError` responder + catchers for the standard `{"error":"...","status":N}` body shape.
+JSON error contract for Rust JSON APIs: an `ApiError` type with the standard `{"error":"...","status":N}` body shape, plus per-framework adapters behind feature flags. The `rocket` feature (default) provides the `Responder` impl and catchers; the `axum` feature provides an `IntoResponse` impl. Both adapters emit the same body and headers.
 
-## Usage as a route error type
+## Route error type
 
 ```rust
 use fig::{ApiError, catchers};
@@ -31,11 +31,9 @@ fn rocket() -> Rocket<Build> {
 }
 ```
 
-### Convenience constructors vs. struct-variant form
+`ApiError::not_found() / ::forbidden() / ::unauthorized() / ::internal()` are zero-argument constructors that use the crate-default message (`"not found"`, etc.). A route that needs to pin a different message uses the struct-variant form, `ApiError::NotFound { message: Some("…".into()) }`. An example is the download spec's `"file not found"`, which distinguishes "no APK staged" from "unknown route".
 
-`ApiError::not_found() / ::forbidden() / ::unauthorized() / ::internal()` are zero-argument constructors that use the crate-default message (`"not found"`, etc.). When a route needs to pin a different message (e.g., the download spec's `"file not found"` to distinguish "no APK staged" from "unknown route"), use the struct-variant form directly: `ApiError::NotFound { message: Some("…".into()) }`. The message override flows into the JSON body's `error` field; the HTTP status code is fixed per variant.
-
-## Usage as a body-builder for an existing app error type
+## Existing app error type
 
 For projects that already have an `AppError` enum and want the same JSON
 contract on API-shaped requests, implement `From<AppError> for ApiError` and
@@ -58,29 +56,29 @@ impl<'r> Responder<'r, 'static> for MyAppError {
 }
 ```
 
-## ApiError variants
+## Variants
 
-Variants with overridable messages carry `message: Option<String>` — `None` uses the default; `Some("…")` pins a custom wording. Variants with embedded `String` always require a message.
+Variants with a `message: Option<String>` field use the default message on `None` and the given wording on `Some("…")`. Variants that hold a `String` message require one. The message flows into the JSON body's `error` field; the HTTP status code is fixed per variant.
 
-| Variant | Status | Default message | Override? | Special headers |
-|---|---|---|---|---|
-| `NotFound { message }` | 404 | `"not found"` | yes | |
-| `BadRequest(String)` | 400 | — | (always required) | |
-| `Forbidden { message }` | 403 | `"forbidden"` | yes | |
-| `Unauthorized { message }` | 401 | `"unauthorized"` | yes | |
-| `Conflict(String)` | 409 | — | (always required) | |
-| `Gone(String)` | 410 | — | (always required) | for revoked / removed resources |
-| `PayloadTooLarge(String)` | 413 | — | (always required) | for body-size limits |
-| `Unprocessable(String)` | 422 | — | (always required) | for semantically invalid bodies (e.g., missing required JSON field) |
-| `TooManyRequests { message, retry_after }` | 429 | — | (always required) | emits `Retry-After` when `retry_after: Some(_)` |
-| `RangeNotSatisfiable { message, content_range }` | 416 | `"range not satisfiable"` | yes | emits `Content-Range` when `content_range: Some(_)` (RFC 9110 §14.4 — typically `"bytes */<total>"`) |
-| `Internal { message }` | 500 | `"internal error"` | yes | |
+| Variant | Status | Message | Notes |
+|---|---|---|---|
+| `NotFound { message }` | 404 | default `"not found"` | |
+| `BadRequest(String)` | 400 | required | |
+| `Forbidden { message }` | 403 | default `"forbidden"` | |
+| `Unauthorized { message }` | 401 | default `"unauthorized"` | |
+| `Conflict(String)` | 409 | required | |
+| `Gone(String)` | 410 | required | for revoked / removed resources |
+| `PayloadTooLarge(String)` | 413 | required | for body-size limits |
+| `Unprocessable(String)` | 422 | required | for semantically invalid bodies (e.g., missing required JSON field) |
+| `TooManyRequests { message, retry_after }` | 429 | required | emits `Retry-After` when `retry_after: Some(_)` |
+| `RangeNotSatisfiable { message, content_range }` | 416 | default `"range not satisfiable"` | emits `Content-Range` when `content_range: Some(_)` (RFC 9110 §14.4; typically `"bytes */<total>"`) |
+| `Internal { message }` | 500 | default `"internal error"` | |
 
-All variants serialize to a `{"error":"<message>","status":<code>}` JSON body with `Content-Type: application/json; charset=utf-8`. The wire HTTP status line AND the body's `status` field always agree on the variant's status code.
+All variants serialize to a `{"error":"<message>","status":<code>}` JSON body with `Content-Type: application/json; charset=utf-8`. The wire HTTP status line and the body's `status` field always carry the variant's status code.
 
-### Catcher set
+## Catchers
 
-`catchers()` returns Rocket catchers for 400 / 404 / 422 / 500 that emit the same `ApiError` shape — register at the JSON-API prefix(es):
+`catchers()` returns Rocket catchers for 400 / 404 / 422 / 500 that emit the same `ApiError` shape. Register them at each JSON-API prefix:
 
 ```rust
 rocket::build()
@@ -88,7 +86,7 @@ rocket::build()
     .register("/download", fig::catchers()) // for non-/api/ JSON surfaces
 ```
 
-401 / 403 are intentionally not in the catcher set — guard-failure dispatch typically goes through the host project's catcher (which then constructs `ApiError::unauthorized()` / `ApiError::forbidden()` itself) so that page-shaped requests can branch to a login redirect.
+Guard-failure dispatch for 401 / 403 typically goes through the host project's own catcher, which constructs `ApiError::unauthorized()` / `ApiError::forbidden()` itself so that page-shaped requests can branch to a login redirect. The catcher set leaves out 401 and 403 by design.
 
 ## License
 

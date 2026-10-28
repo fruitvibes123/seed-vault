@@ -3,15 +3,16 @@
 Generic per-key attempt budget: a storage trait with burn semantics,
 framework-free.
 
-- `AttemptKind` — a marker trait per use case. It names the key type, the
-  budget, the soft-lock retry window, and the wire-visible exhaustion status
-  code and header. The same shape fits pairing codes, password-reset attempts,
+- `AttemptKind`: a marker trait per use case. It names the key type
+  (`Key`), the budget (`BUDGET`), the wire-visible exhaustion status code and
+  header (`EXHAUSTION_STATUS_CODE`, `EXHAUSTION_HEADER`), and a log name
+  (`NAME`). The same shape fits pairing codes, password-reset attempts,
   or any credential with a bounded guess budget.
-- `BudgetStorage<A>` — the trait behind the budget's persistent state. Its two
-  methods are deliberately split: `check` is read-only so a request guard can
-  run it on every request with no side effects, and `decrement` is called only
-  when an attempt actually counted (for example, after a credential validation
-  failed). A successful request never burns budget by mere arrival.
+- `BudgetStorage<A>`: the trait behind the budget's persistent state. Its two
+  methods are split. `check` is read-only: a request guard can run it on
+  every request with no side effects, and a successful request burns no budget
+  by arriving. `decrement` is called only when an attempt counted (for
+  example, after a credential validation failed).
 - The router adapter is the consumer's: read `A::Key` from the request, call
   `check`, fail with `A`'s exhaustion status when the budget is gone.
 
